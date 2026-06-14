@@ -810,6 +810,7 @@
 
       // Load every Nth frame — frameStep=2 halves total requests
       const stepCount = Math.ceil(frameCount / frameStep);
+      const startIdx  = stepCount - 1; // index shown at scroll progress=0
 
       let cvW = 0, cvH = 0, dpr = 1;
       let fgW = 0, fgH = 0, fgX = 0, fgY = 0;
@@ -851,10 +852,10 @@
       }
 
       function onAllLoaded() {
-        hideLoader();
-        const startIdx = stepCount - 1;
-        if (frames[startIdx] && frames[startIdx].complete) { drawFrame(frames[startIdx]); currentFrame = startIdx; }
-        startAnimation();
+        if (!animRunning) {
+          if (frames[startIdx] && frames[startIdx].complete) { drawFrame(frames[startIdx]); currentFrame = startIdx; }
+          hideLoader(); startAnimation();
+        }
       }
 
       function startAnimation() {
@@ -897,39 +898,47 @@
         });
       }
 
+      function makeFrame(i) {
+        const img = new Image();
+        img.decoding = 'async';
+        const n = i * frameStep + 1;
+        img.src = `${framesPath}frame_${String(n).padStart(4,'0')}.${frameExt}`;
+        img.onload = () => {
+          frames[i] = img;
+          loaded++;
+          const pct = Math.round((loaded / stepCount) * 100);
+          barEl.style.width = pct + '%';
+          pctEl.textContent = `Cargando… ${pct}%`;
+          // Start frame ready → show instantly, no threshold wait
+          if (i === startIdx && !animRunning) {
+            drawFrame(img); currentFrame = i;
+            hideLoader(); startAnimation();
+          }
+        };
+        img.onerror = () => { loaded++; if (!animRunning && loaded >= stepCount) onAllLoaded(); };
+        frames[i] = img;
+      }
+
       function startLoading() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        frames = Array.from({ length: stepCount }, (_, i) => {
-          const img = new Image();
-          img.decoding = 'async';
-          // frameStep=2 → frame_0001, frame_0003, frame_0005…
-          const frameNum = i * frameStep + 1;
-          img.src = `${framesPath}frame_${String(frameNum).padStart(4,'0')}.${frameExt}`;
-          img.onload = () => {
-            loaded++;
-            const pct = Math.round((loaded / stepCount) * 100);
-            barEl.style.width = pct + '%';
-            pctEl.textContent = `Cargando… ${pct}%`;
-            // Start playing at 15% loaded — no need to wait for 100%
-            if (!animRunning && loaded >= Math.ceil(stepCount * 0.15)) {
-              hideLoader();
-              startAnimation();
-            }
-            if (loaded === stepCount && !animRunning) onAllLoaded();
-          };
-          img.onerror = () => { loaded++; if (loaded === stepCount && !animRunning) onAllLoaded(); };
-          return img;
-        });
+        frames = new Array(stepCount).fill(null);
+
+        // Load first-visible frame first, then everything else immediately after
+        makeFrame(startIdx);
+        for (let i = 0; i < stepCount; i++) {
+          if (i !== startIdx) makeFrame(i);
+        }
       }
 
+      // Start preloading 250% before section enters viewport (loads while user reads above)
       const observer = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting) {
           observer.disconnect();
           startLoading();
         }
-      }, { rootMargin: '80% 0px' });
+      }, { rootMargin: '250% 0px' });
       observer.observe(section);
     }
 
