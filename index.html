@@ -8,9 +8,9 @@
   <meta name="keywords" content="web de ventas, página de conversión, diseño web premium, página que vende, conversión">
 
   <!-- Preload first visible frame of each scroll section — starts downloading before any JS runs -->
-  <link rel="preload" href="./frames/clocks/frame_0667.jpg" as="image">
-  <link rel="preload" href="./frames/airpods/frame_0475.jpg" as="image">
-  <link rel="preload" href="./frames/aroma/frame_0667.jpg" as="image">
+  <link rel="preload" href="./frames/clocks/frame_0665.jpg" as="image">
+  <link rel="preload" href="./frames/airpods/frame_0473.jpg" as="image">
+  <link rel="preload" href="./frames/aroma/frame_0665.jpg" as="image">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1002,20 +1002,18 @@
             drawFrame(img); currentFrame = i;
             hideLoader(); startAnimation();
             if (window._splashSectionReady) window._splashSectionReady();
-            // Start frame ready — now load remaining frames in background
-            for (let j = 0; j < stepCount; j++) {
-              if (j !== startIdx) makeFrame(j);
-            }
+            // Load remaining frames in scroll order: descending first (user scrolls down),
+            // then any above startIdx (rare reverse-scroll case)
+            for (let j = startIdx - 1; j >= 0; j--) makeFrame(j);
+            for (let j = startIdx + 1; j < stepCount; j++) makeFrame(j);
           }
         };
         img.onerror = () => {
           loaded++;
-          // Even on error, unblock the splash so it doesn't hang
           if (i === startIdx) {
             if (window._splashSectionReady) window._splashSectionReady();
-            for (let j = 0; j < stepCount; j++) {
-              if (j !== startIdx) makeFrame(j);
-            }
+            for (let j = startIdx - 1; j >= 0; j--) makeFrame(j);
+            for (let j = startIdx + 1; j < stepCount; j++) makeFrame(j);
           }
         };
         frames[i] = img;
@@ -1038,7 +1036,7 @@
         sectionId: 'scroll-clocks', canvasId: 'canvas-clocks',
         loaderId: 'loader-clocks', barId: 'bar-clocks', pctId: 'pct-clocks',
         framesPath: './frames/clocks/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 4,
         slides: [
           { id: 'sc-1', from: 0, to: 0.38 },
           { id: 'sc-2', from: 0.32, to: 0.72 },
@@ -1049,7 +1047,7 @@
         sectionId: 'scroll-airpods', canvasId: 'canvas-airpods',
         loaderId: 'loader-airpods', barId: 'bar-airpods', pctId: 'pct-airpods',
         framesPath: './frames/airpods/',
-        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280,
+        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280, frameStep: 4,
         slides: [
           { id: 'sa-1', from: 0, to: 0.38 },
           { id: 'sa-2', from: 0.32, to: 0.72 },
@@ -1060,7 +1058,7 @@
         sectionId: 'scroll-aroma', canvasId: 'canvas-aroma',
         loaderId: 'loader-aroma', barId: 'bar-aroma', pctId: 'pct-aroma',
         framesPath: './frames/aroma/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 4,
         slides: [
           { id: 'sm-1', from: 0, to: 0.38 },
           { id: 'sm-2', from: 0.32, to: 0.72 },
