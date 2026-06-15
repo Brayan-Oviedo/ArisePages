@@ -7,6 +7,11 @@
   <meta name="description" content="ArisePages: Webs premium que convierten. Desde $100. En 7 días. Conversión garantizada. Sin contratos.">
   <meta name="keywords" content="web de ventas, página de conversión, diseño web premium, página que vende, conversión">
 
+  <!-- Preload first visible frame of each scroll section — starts downloading before any JS runs -->
+  <link rel="preload" href="./frames/clocks/frame_0667.jpg" as="image">
+  <link rel="preload" href="./frames/airpods/frame_0475.jpg" as="image">
+  <link rel="preload" href="./frames/aroma/frame_0667.jpg" as="image">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -874,7 +879,7 @@
 
     // Splash coordinator — hides splash once all 3 sections have their first frame ready
     (function () {
-      var TOTAL = 3, MIN_MS = 1400, count = 0, minPassed = false;
+      var TOTAL = 3, MIN_MS = 1200, count = 0, minPassed = false;
       function tryHide() {
         if (count < TOTAL || !minPassed) return;
         var el = document.getElementById('splash');
@@ -993,15 +998,26 @@
         img.onload = () => {
           frames[i] = img;
           loaded++;
-          if (barEl) barEl.style.width = Math.round((loaded / stepCount) * 100) + '%';
-          if (pctEl) pctEl.textContent = `Cargando… ${Math.round((loaded / stepCount) * 100)}%`;
           if (i === startIdx && !animRunning) {
             drawFrame(img); currentFrame = i;
             hideLoader(); startAnimation();
             if (window._splashSectionReady) window._splashSectionReady();
+            // Start frame ready — now load remaining frames in background
+            for (let j = 0; j < stepCount; j++) {
+              if (j !== startIdx) makeFrame(j);
+            }
           }
         };
-        img.onerror = () => { loaded++; };
+        img.onerror = () => {
+          loaded++;
+          // Even on error, unblock the splash so it doesn't hang
+          if (i === startIdx) {
+            if (window._splashSectionReady) window._splashSectionReady();
+            for (let j = 0; j < stepCount; j++) {
+              if (j !== startIdx) makeFrame(j);
+            }
+          }
+        };
         frames[i] = img;
       }
 
@@ -1009,13 +1025,11 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         frames = new Array(stepCount).fill(null);
+        // Only request the start frame — rest load after it arrives (keeps splash fast)
         makeFrame(startIdx);
-        for (let i = 0; i < stepCount; i++) {
-          if (i !== startIdx) makeFrame(i);
-        }
       }
 
-      // Start immediately — splash provides the loading UX while all sections preload in parallel
+      // Start immediately so frames begin loading before window.load fires
       startLoading();
     }
 
@@ -1068,14 +1082,10 @@
       });
     });
 
-    window.addEventListener('load', () => {
-      // Init scroll frames
-      try {
-        initScrollFrames();
-      } catch (e) {
-        console.warn('Frames error:', e);
-      }
+    // Start frame loading immediately — don't wait for window.load (which waits for GSAP, fonts, etc.)
+    try { initScrollFrames(); } catch (e) { console.warn('Frames error:', e); }
 
+    window.addEventListener('load', () => {
       // Init animations
       try {
         gsap.registerPlugin(ScrollTrigger);
