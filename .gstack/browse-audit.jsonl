@@ -1,0 +1,19 @@
+{"ts":"2026-06-15T03:33:52.210Z","cmd":"goto","args":"http://localhost:8000/","origin":"http://localhost:8000/","durationMs":11,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:33:52.249Z","cmd":"wait","args":"--load","origin":"http://localhost:8000/","durationMs":0,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:33:52.340Z","cmd":"screenshot","args":"/tmp/landing-hero.png","origin":"http://localhost:8000/","durationMs":54,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:07.700Z","cmd":"goto","args":"http://localhost:8000","origin":"http://localhost:8000/","durationMs":438,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:11.341Z","cmd":"screenshot","args":"/tmp/landing-hero.png","origin":"http://localhost:8000/","durationMs":585,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:19.046Z","cmd":"js","args":"window.scrollTo(0, 0)","origin":"http://localhost:8000/","durationMs":2,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:20.181Z","cmd":"screenshot","args":"--viewport /tmp/landing-hero-viewport.png","origin":"http://localhost:8000/","durationMs":85,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:28.676Z","cmd":"snapshot","args":"-i","origin":"http://localhost:8000/","durationMs":15,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:28.712Z","cmd":"text","args":"","origin":"http://localhost:8000/","durationMs":2,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:32.649Z","cmd":"click","args":"@e5","origin":"http://localhost:8000/","durationMs":33,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:34:35.264Z","cmd":"screenshot","args":"/tmp/pricing-section.png","origin":"http://localhost:8000/","durationMs":565,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:35:42.017Z","cmd":"reload","args":"","origin":"http://localhost:8000/","durationMs":93,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:35:43.104Z","cmd":"screenshot","args":"--viewport /tmp/hero-animated-1.png","origin":"http://localhost:8000/","durationMs":43,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:35:44.172Z","cmd":"screenshot","args":"--viewport /tmp/hero-animated-2.png","origin":"http://localhost:8000/","durationMs":26,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:36:17.596Z","cmd":"screenshot","args":"--viewport /tmp/hero-final.png","origin":"http://localhost:8000/","durationMs":30,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:36:55.088Z","cmd":"js","args":"window.scrollTo(0, 0)","origin":"http://localhost:8000/","durationMs":1,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:36:56.183Z","cmd":"screenshot","args":"--viewport /tmp/hero-animated-final.png","origin":"http://localhost:8000/","durationMs":52,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:37:16.594Z","cmd":"js","args":"window.scrollTo(0, 100)","origin":"http://localhost:8000/","durationMs":0,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-06-15T03:37:18.721Z","cmd":"screenshot","args":"--viewport /tmp/hero-complete.png","origin":"http://localhost:8000/","durationMs":75,"status":"ok","hasCookies":false,"mode":"launched"}

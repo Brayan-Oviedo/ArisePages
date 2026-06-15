@@ -874,9 +874,9 @@
       window.open(`https://wa.me/573507016717?text=${text}`, '_blank');
     }
 
-    // Splash coordinator — hides splash once all 3 sections have their first frame ready
+    // Splash coordinator — exits as soon as all 3 first-frames are ready + MIN_MS
     (function () {
-      var TOTAL = 3, MIN_MS = 600, count = 0, minPassed = false;
+      var TOTAL = 3, MIN_MS = 900, count = 0, minPassed = false;
       function tryHide() {
         if (count < TOTAL || !minPassed) return;
         var el = document.getElementById('splash');
@@ -884,11 +884,10 @@
         el.classList.add('exit');
         setTimeout(function () { el.style.display = 'none'; }, 950);
       }
+      // 900ms: wordmark + rule animations complete, minimum branding exposure
       setTimeout(function () { minPassed = true; tryHide(); }, MIN_MS);
-      // Safety: always hide splash by 1.5s even if a frame request hangs
-      setTimeout(function () {
-        count = TOTAL; minPassed = true; tryHide();
-      }, 1500);
+      // Hard cap: splash starts fading at 2s → fully gone at ~2.9s (< 3s guarantee)
+      setTimeout(function () { count = TOTAL; minPassed = true; tryHide(); }, 2000);
       window._splashSectionReady = function () {
         count++;
         var pct = Math.round((count / TOTAL) * 100);
@@ -900,13 +899,12 @@
       };
     })();
 
-    // Scroll-frame player — loads all sections immediately on page load (no observer delay)
+    // Scroll-frame player
     function createScrollFramePlayer({ sectionId, canvasId, loaderId, barId, pctId, framesPath, frameCount, frameExt, frameW, frameH, slides, frameStep = 2 }) {
       const section  = document.getElementById(sectionId);
       const canvas   = document.getElementById(canvasId);
       const loaderEl = document.getElementById(loaderId);
       const barEl    = document.getElementById(barId);
-      const pctEl    = document.getElementById(pctId);
       const ctx      = canvas.getContext('2d');
       const slideEls = (slides || []).map(s => ({ el: document.getElementById(s.id), from: s.from, to: s.to }));
       const isPortrait = frameH > frameW;
@@ -914,12 +912,13 @@
       const stepCount = Math.ceil(frameCount / frameStep);
       const startIdx  = stepCount - 1;
 
+      // Cap DPR at 2 — no visible difference above 2x, halves canvas memory on 3x screens
       let cvW = 0, cvH = 0, dpr = 1;
       let fgW = 0, fgH = 0, fgX = 0, fgY = 0;
       let frames = [], loaded = 0, currentFrame = -1, animRunning = false;
 
       function resizeCanvas() {
-        dpr = window.devicePixelRatio || 1;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
         cvW = window.innerWidth;
         cvH = window.innerHeight;
         const aspect   = frameW / frameH;
@@ -960,7 +959,10 @@
 
       function loop() {
         requestAnimationFrame(loop);
-        const rect     = section.getBoundingClientRect();
+        // Skip CPU work when section is well outside viewport
+        const rect = section.getBoundingClientRect();
+        if (rect.bottom < -window.innerHeight || rect.top > window.innerHeight * 2) return;
+
         const scrolled = -rect.top;
         const total    = rect.height - window.innerHeight;
         if (total <= 0) return;
@@ -993,42 +995,51 @@
       }
 
       function makeFrame(i) {
+        if (frames[i] && frames[i].src) return; // already requested
         const img = new Image();
         const n   = i * frameStep + 1;
         img.src   = `${framesPath}frame_${String(n).padStart(4, '0')}.${frameExt}`;
+        frames[i] = img;
         img.onload = () => {
-          frames[i] = img;
           loaded++;
+          if (barEl) barEl.style.width = Math.round((loaded / stepCount) * 100) + '%';
           if (i === startIdx && !animRunning) {
             drawFrame(img); currentFrame = i;
             hideLoader(); startAnimation();
             if (window._splashSectionReady) window._splashSectionReady();
-            // Load remaining frames in scroll order: descending first (user scrolls down),
-            // then any above startIdx (rare reverse-scroll case)
-            for (let j = startIdx - 1; j >= 0; j--) makeFrame(j);
-            for (let j = startIdx + 1; j < stepCount; j++) makeFrame(j);
+            batchLoad();
           }
         };
         img.onerror = () => {
           loaded++;
           if (i === startIdx) {
             if (window._splashSectionReady) window._splashSectionReady();
-            for (let j = startIdx - 1; j >= 0; j--) makeFrame(j);
-            for (let j = startIdx + 1; j < stepCount; j++) makeFrame(j);
+            batchLoad();
           }
         };
-        frames[i] = img;
+      }
+
+      function batchLoad() {
+        // Batch 1 (immediate): nearest 40 frames in scroll direction (user scrolls down = idx decreases)
+        for (let j = startIdx - 1; j >= Math.max(0, startIdx - 40); j--) makeFrame(j);
+        // Batch 2 (100ms): next 60 frames + a few above for reverse-scroll
+        setTimeout(() => {
+          for (let j = Math.max(0, startIdx - 41); j >= Math.max(0, startIdx - 100); j--) makeFrame(j);
+          for (let j = startIdx + 1; j < Math.min(stepCount, startIdx + 15); j++) makeFrame(j);
+        }, 100);
+        // Batch 3 (400ms): everything remaining in background
+        setTimeout(() => {
+          for (let j = 0; j < stepCount; j++) makeFrame(j);
+        }, 400);
       }
 
       function startLoading() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         frames = new Array(stepCount).fill(null);
-        // Only request the start frame — rest load after it arrives (keeps splash fast)
-        makeFrame(startIdx);
+        makeFrame(startIdx); // first frame only → triggers batchLoad on arrival
       }
 
-      // Start immediately so frames begin loading before window.load fires
       startLoading();
     }
 
