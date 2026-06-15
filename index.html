@@ -9,7 +9,7 @@
 
   <!-- Preload first visible frame of each scroll section — starts downloading before any JS runs -->
   <link rel="preload" href="./frames/clocks/frame_0667.jpg" as="image">
-  <link rel="preload" href="./frames/airpods/frame_0475.jpg" as="image">
+  <link rel="preload" href="./frames/airpods/frame_0476.jpg" as="image">
   <link rel="preload" href="./frames/aroma/frame_0667.jpg" as="image">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -874,20 +874,23 @@
       window.open(`https://wa.me/573507016717?text=${text}`, '_blank');
     }
 
-    // Splash coordinator — exits as soon as all 3 first-frames are ready + MIN_MS
+    // Splash coordinator — exits as soon as all 3 first-frames are drawn + MIN_MS
     (function () {
-      var TOTAL = 3, MIN_MS = 900, count = 0, minPassed = false;
-      function tryHide() {
-        if (count < TOTAL || !minPassed) return;
+      var TOTAL = 3, MIN_MS = 900, count = 0, minPassed = false, done = false;
+      function doHide() {
+        if (done) return; done = true;
         var el = document.getElementById('splash');
         if (!el) return;
         el.classList.add('exit');
         setTimeout(function () { el.style.display = 'none'; }, 950);
       }
+      function tryHide() {
+        if (count >= TOTAL && minPassed) doHide();
+      }
       // 900ms: wordmark + rule animations complete, minimum branding exposure
       setTimeout(function () { minPassed = true; tryHide(); }, MIN_MS);
-      // Hard cap: splash starts fading at 2s → fully gone at ~2.9s (< 3s guarantee)
-      setTimeout(function () { count = TOTAL; minPassed = true; tryHide(); }, 2000);
+      // Absolute cap at 3s — only fires if frames genuinely never loaded (network failure)
+      setTimeout(doHide, 3000);
       window._splashSectionReady = function () {
         count++;
         var pct = Math.round((count / TOTAL) * 100);
