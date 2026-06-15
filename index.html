@@ -1020,17 +1020,19 @@
       }
 
       function batchLoad() {
-        // Batch 1 (immediate): nearest 40 frames in scroll direction (user scrolls down = idx decreases)
-        for (let j = startIdx - 1; j >= Math.max(0, startIdx - 40); j--) makeFrame(j);
-        // Batch 2 (100ms): next 60 frames + a few above for reverse-scroll
+        // Batch 1 (immediate): first 60 frames in scroll direction — covers ~500px of scroll before any gap
+        const B1 = 60;
+        for (let j = startIdx - 1; j >= Math.max(0, startIdx - B1); j--) makeFrame(j);
+        // Batch 2 (80ms): next 120 frames — covers the middle third of the section
         setTimeout(() => {
-          for (let j = Math.max(0, startIdx - 41); j >= Math.max(0, startIdx - 100); j--) makeFrame(j);
-          for (let j = startIdx + 1; j < Math.min(stepCount, startIdx + 15); j++) makeFrame(j);
-        }, 100);
-        // Batch 3 (400ms): everything remaining in background
+          for (let j = Math.max(0, startIdx - B1 - 1); j >= Math.max(0, startIdx - B1 - 120); j--) makeFrame(j);
+          // Load a few frames above startIdx for reverse-scroll smoothness
+          for (let j = startIdx + 1; j < Math.min(stepCount, startIdx + 20); j++) makeFrame(j);
+        }, 80);
+        // Batch 3 (350ms): all remaining frames — user unlikely to reach tail before this fires
         setTimeout(() => {
-          for (let j = 0; j < stepCount; j++) makeFrame(j);
-        }, 400);
+          for (let j = 0; j < stepCount; j++) makeFrame(j); // makeFrame skips already-requested
+        }, 350);
       }
 
       function startLoading() {
@@ -1044,33 +1046,37 @@
     }
 
     function initScrollFrames() {
+      // frameStep=2: 334 frames, 7.8px/frame = 39fps equiv at normal scroll — smooth
       createScrollFramePlayer({
         sectionId: 'scroll-clocks', canvasId: 'canvas-clocks',
         loaderId: 'loader-clocks', barId: 'bar-clocks', pctId: 'pct-clocks',
         framesPath: './frames/clocks/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 3,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 2,
         slides: [
           { id: 'sc-1', from: 0, to: 0.38 },
           { id: 'sc-2', from: 0.32, to: 0.72 },
           { id: 'sc-3', from: 0.66, to: 1.00 },
         ],
       });
+      // frameStep=1: 476 frames, 6.4px/frame = 47fps equiv — cinema smooth
+      // (justified: fewer source frames over a longer scroll range)
       createScrollFramePlayer({
         sectionId: 'scroll-airpods', canvasId: 'canvas-airpods',
         loaderId: 'loader-airpods', barId: 'bar-airpods', pctId: 'pct-airpods',
         framesPath: './frames/airpods/',
-        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280, frameStep: 3,
+        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280, frameStep: 1,
         slides: [
           { id: 'sa-1', from: 0, to: 0.38 },
           { id: 'sa-2', from: 0.32, to: 0.72 },
           { id: 'sa-3', from: 0.66, to: 1.00 },
         ],
       });
+      // frameStep=2: 334 frames, 7.8px/frame = 39fps equiv — smooth
       createScrollFramePlayer({
         sectionId: 'scroll-aroma', canvasId: 'canvas-aroma',
         loaderId: 'loader-aroma', barId: 'bar-aroma', pctId: 'pct-aroma',
         framesPath: './frames/aroma/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 3,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 2,
         slides: [
           { id: 'sm-1', from: 0, to: 0.38 },
           { id: 'sm-2', from: 0.32, to: 0.72 },
