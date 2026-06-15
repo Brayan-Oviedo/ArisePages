@@ -439,9 +439,84 @@
       .slide-feat-title { font-size: clamp(1.2rem, 5vw, 1.8rem); }
       .slide-feat-body { font-size: 0.7rem; }
     }
+
+    /* ── Splash screen ── */
+    #splash {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #050507;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1);
+    }
+    #splash.exit { opacity: 0; transform: scale(1.04); pointer-events: none; }
+    #splash-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 55% 45% at 50% 48%, rgba(255,45,85,0.12) 0%, transparent 70%);
+      animation: splashPulse 3s ease-in-out infinite;
+    }
+    @keyframes splashPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+    #splash-inner { position: relative; text-align: center; width: min(480px, 85vw); }
+    #splash-wordmark {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2.6rem, 9vw, 5.5rem); font-weight: 800;
+      letter-spacing: -0.02em; text-transform: uppercase; line-height: 1;
+      opacity: 0; transform: translateY(20px);
+      animation: splashRise 0.8s cubic-bezier(0.22,0.61,0.36,1) 0.15s forwards;
+    }
+    #splash-wordmark span { color: #FF2D55; }
+    #splash-rule {
+      height: 1px; background: rgba(255,45,85,0.55); border-radius: 1px;
+      box-shadow: 0 0 14px rgba(255,45,85,0.45);
+      margin: 1.6rem 0 1.4rem;
+      transform: scaleX(0); transform-origin: center;
+      animation: splashRule 0.6s cubic-bezier(0.4,0,0.2,1) 0.65s forwards;
+    }
+    #splash-tagline {
+      font-family: 'Poppins', sans-serif; font-size: 0.65rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22); font-weight: 600; margin-bottom: 2.4rem;
+      opacity: 0; animation: splashFade 0.5s ease 1s forwards;
+    }
+    #splash-track {
+      height: 2px; background: rgba(255,255,255,0.07);
+      border-radius: 2px; overflow: hidden;
+      opacity: 0; animation: splashFade 0.4s ease 1.1s forwards;
+    }
+    #splash-fill {
+      height: 100%; width: 0%; background: #FF2D55; border-radius: 2px;
+      box-shadow: 0 0 10px rgba(255,45,85,0.7);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    #splash-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 0.9rem;
+      font-family: 'Poppins', sans-serif; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18); font-weight: 600;
+      opacity: 0; animation: splashFade 0.4s ease 1.15s forwards;
+    }
+    #splash-num { color: rgba(255,45,85,0.75); font-weight: 700; }
+    @keyframes splashRise { to { opacity:1; transform:translateY(0); } }
+    @keyframes splashRule { to { transform:scaleX(1); } }
+    @keyframes splashFade { to { opacity:1; } }
   </style>
 </head>
 <body>
+
+  <!-- Splash screen -->
+  <div id="splash">
+    <div id="splash-glow"></div>
+    <div id="splash-inner">
+      <div id="splash-wordmark">Arise<span>Pages</span></div>
+      <div id="splash-rule"></div>
+      <div id="splash-tagline">Diseño que convierte</div>
+      <div id="splash-track"><div id="splash-fill"></div></div>
+      <div id="splash-meta">
+        <span>Cargando experiencia</span>
+        <span id="splash-num">0%</span>
+      </div>
+    </div>
+  </div>
+
   <div class="grain"></div>
 
   <nav id="main-nav">
@@ -797,20 +872,41 @@
       window.open(`https://wa.me/573507016717?text=${text}`, '_blank');
     }
 
-    // Scroll-frame player
+    // Splash coordinator — hides splash once all 3 sections have their first frame ready
+    (function () {
+      var TOTAL = 3, MIN_MS = 1400, count = 0, minPassed = false;
+      function tryHide() {
+        if (count < TOTAL || !minPassed) return;
+        var el = document.getElementById('splash');
+        if (!el) return;
+        el.classList.add('exit');
+        setTimeout(function () { el.style.display = 'none'; }, 950);
+      }
+      setTimeout(function () { minPassed = true; tryHide(); }, MIN_MS);
+      window._splashSectionReady = function () {
+        count++;
+        var pct = Math.round((count / TOTAL) * 100);
+        var fill = document.getElementById('splash-fill');
+        var num  = document.getElementById('splash-num');
+        if (fill) fill.style.width = pct + '%';
+        if (num)  num.textContent  = pct + '%';
+        tryHide();
+      };
+    })();
+
+    // Scroll-frame player — loads all sections immediately on page load (no observer delay)
     function createScrollFramePlayer({ sectionId, canvasId, loaderId, barId, pctId, framesPath, frameCount, frameExt, frameW, frameH, slides, frameStep = 2 }) {
-      const section = document.getElementById(sectionId);
-      const canvas = document.getElementById(canvasId);
+      const section  = document.getElementById(sectionId);
+      const canvas   = document.getElementById(canvasId);
       const loaderEl = document.getElementById(loaderId);
-      const barEl = document.getElementById(barId);
-      const pctEl = document.getElementById(pctId);
-      const ctx = canvas.getContext('2d');
+      const barEl    = document.getElementById(barId);
+      const pctEl    = document.getElementById(pctId);
+      const ctx      = canvas.getContext('2d');
       const slideEls = (slides || []).map(s => ({ el: document.getElementById(s.id), from: s.from, to: s.to }));
       const isPortrait = frameH > frameW;
 
-      // Load every Nth frame — frameStep=2 halves total requests
       const stepCount = Math.ceil(frameCount / frameStep);
-      const startIdx  = stepCount - 1; // index shown at scroll progress=0
+      const startIdx  = stepCount - 1;
 
       let cvW = 0, cvH = 0, dpr = 1;
       let fgW = 0, fgH = 0, fgX = 0, fgY = 0;
@@ -820,9 +916,8 @@
         dpr = window.devicePixelRatio || 1;
         cvW = window.innerWidth;
         cvH = window.innerHeight;
-        const aspect = frameW / frameH;
+        const aspect   = frameW / frameH;
         const vpAspect = cvW / cvH;
-
         if (isPortrait) {
           fgH = cvH; fgW = cvH * aspect;
           fgX = (cvW - fgW) / 2; fgY = 0;
@@ -831,10 +926,9 @@
           else { fgH = cvH; fgW = cvH * aspect; }
           fgX = (cvW - fgW) / 2; fgY = (cvH - fgH) / 2;
         }
-
-        canvas.width = Math.round(cvW * dpr);
+        canvas.width  = Math.round(cvW * dpr);
         canvas.height = Math.round(cvH * dpr);
-        canvas.style.width = cvW + 'px';
+        canvas.style.width  = cvW + 'px';
         canvas.style.height = cvH + 'px';
         ctx.scale(dpr, dpr);
         if (frames[currentFrame] && frames[currentFrame].complete) drawFrame(frames[currentFrame]);
@@ -846,16 +940,10 @@
       }
 
       function hideLoader() {
-        loaderEl.style.transition = 'opacity 0.5s ease';
+        if (!loaderEl) return;
+        loaderEl.style.transition = 'opacity 0.4s ease';
         loaderEl.style.opacity = '0';
-        setTimeout(() => { loaderEl.style.display = 'none'; }, 550);
-      }
-
-      function onAllLoaded() {
-        if (!animRunning) {
-          if (frames[startIdx] && frames[startIdx].complete) { drawFrame(frames[startIdx]); currentFrame = startIdx; }
-          hideLoader(); startAnimation();
-        }
+        setTimeout(() => { loaderEl.style.display = 'none'; }, 450);
       }
 
       function startAnimation() {
@@ -866,12 +954,11 @@
 
       function loop() {
         requestAnimationFrame(loop);
-        const rect = section.getBoundingClientRect();
+        const rect     = section.getBoundingClientRect();
         const scrolled = -rect.top;
-        const total = rect.height - window.innerHeight;
+        const total    = rect.height - window.innerHeight;
         if (total <= 0) return;
         const progress = Math.max(0, Math.min(1, scrolled / total));
-        // Map progress to step-reduced index; scan outward for nearest loaded frame
         let idx = Math.max(0, stepCount - 1 - Math.floor(progress * stepCount));
         if (idx !== currentFrame) {
           for (let d = 0; d < stepCount; d++) {
@@ -892,54 +979,44 @@
             else opa = 1;
           }
           opa = Math.max(0, Math.min(1, opa));
-          const ty = progress < from + FADE && progress >= from ? (1 - opa) * 38 : progress > to - FADE && progress <= to ? (1 - opa) * -38 : 0;
-          el.style.opacity = opa;
+          const ty = progress < from + FADE && progress >= from ? (1 - opa) * 38
+                   : progress > to - FADE   && progress <= to   ? (1 - opa) * -38 : 0;
+          el.style.opacity   = opa;
           el.style.transform = `translateY(${ty}px)`;
         });
       }
 
       function makeFrame(i) {
         const img = new Image();
-        img.decoding = 'async';
-        const n = i * frameStep + 1;
-        img.src = `${framesPath}frame_${String(n).padStart(4,'0')}.${frameExt}`;
+        const n   = i * frameStep + 1;
+        img.src   = `${framesPath}frame_${String(n).padStart(4, '0')}.${frameExt}`;
         img.onload = () => {
           frames[i] = img;
           loaded++;
-          const pct = Math.round((loaded / stepCount) * 100);
-          barEl.style.width = pct + '%';
-          pctEl.textContent = `Cargando… ${pct}%`;
-          // Start frame ready → show instantly, no threshold wait
+          if (barEl) barEl.style.width = Math.round((loaded / stepCount) * 100) + '%';
+          if (pctEl) pctEl.textContent = `Cargando… ${Math.round((loaded / stepCount) * 100)}%`;
           if (i === startIdx && !animRunning) {
             drawFrame(img); currentFrame = i;
             hideLoader(); startAnimation();
+            if (window._splashSectionReady) window._splashSectionReady();
           }
         };
-        img.onerror = () => { loaded++; if (!animRunning && loaded >= stepCount) onAllLoaded(); };
+        img.onerror = () => { loaded++; };
         frames[i] = img;
       }
 
       function startLoading() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         frames = new Array(stepCount).fill(null);
-
-        // Load first-visible frame first, then everything else immediately after
         makeFrame(startIdx);
         for (let i = 0; i < stepCount; i++) {
           if (i !== startIdx) makeFrame(i);
         }
       }
 
-      // Start preloading 250% before section enters viewport (loads while user reads above)
-      const observer = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) {
-          observer.disconnect();
-          startLoading();
-        }
-      }, { rootMargin: '250% 0px' });
-      observer.observe(section);
+      // Start immediately — splash provides the loading UX while all sections preload in parallel
+      startLoading();
     }
 
     function initScrollFrames() {
