@@ -125,7 +125,7 @@ Soy Brayan de AriseOS. Diseño landing pages profesionales en 24-48h, enfocadas 
 Quedo atento,
 Brayan Oviedo — AriseOS
 WhatsApp: +57 350 701 6717
-brayan.oviedo@ceiba.com.co"""
+brayanoq26@gmail.com"""
 
     return {"outreach_dm": dm, "outreach_email_subject": email_subj, "outreach_email": email_body}
 

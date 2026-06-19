@@ -3,19 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArisePages | Webs que venden - Desde $100</title>
-  <meta name="description" content="ArisePages: Webs premium que convierten. Desde $100. En 7 días. Conversión garantizada. Sin contratos.">
+  <title>Webs de Conversión Premium | Vende más con diseño</title>
+  <meta name="description" content="Webs premium para tu negocio. Desde $100. En 7 días. Conversión garantizada. Sin contratos.">
   <meta name="keywords" content="web de ventas, página de conversión, diseño web premium, página que vende, conversión">
-
-  <!-- Preload first visible frame of each scroll section — starts downloading before any JS runs -->
-  <link rel="preload" href="./frames/clocks/frame_0667.jpg" as="image">
-  <link rel="preload" href="./frames/airpods/frame_0476.jpg" as="image">
-  <link rel="preload" href="./frames/aroma/frame_0667.jpg" as="image">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
@@ -31,25 +27,8 @@
       --card-bg: rgba(255,255,255,0.03);
     }
 
-    html {
-      -webkit-font-smoothing: antialiased;
-      scrollbar-width: thin;
-      scrollbar-color: var(--red) var(--bg);
-    }
-    html::-webkit-scrollbar {
-      width: 8px;
-    }
-    html::-webkit-scrollbar-track {
-      background: var(--bg);
-    }
-    html::-webkit-scrollbar-thumb {
-      background: var(--red);
-      border-radius: 4px;
-    }
-    html::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,45,85,0.8);
-    }
-    body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow-x: hidden; font-weight: 400; width: 100%; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow-x: hidden; font-weight: 400; }
     h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; font-weight: 800; letter-spacing: -0.01em; }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
@@ -103,7 +82,7 @@
       border: 1px solid rgba(255,255,255,0.09); border-radius: 100px;
       padding: 0.4rem 1rem; margin-bottom: 1.4rem;
       background: rgba(255,255,255,0.025); backdrop-filter: blur(12px);
-      opacity: 1;
+      opacity: 0;
     }
 
     .hero-badge-dot {
@@ -113,7 +92,7 @@
 
     .hero-eyebrow {
       font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--red); margin-bottom: 1.5rem; opacity: 1; font-weight: 700;
+      text-transform: uppercase; color: var(--red); margin-bottom: 1.5rem; opacity: 0; font-weight: 700;
     }
 
     .hero-title {
@@ -125,10 +104,10 @@
 
     .hero-sub {
       font-family: 'Inter', sans-serif; font-size: clamp(0.85rem, 2vw, 1rem);
-      color: var(--muted); margin-bottom: 2rem; max-width: 520px; line-height: 1.7; opacity: 1;
+      color: var(--muted); margin-bottom: 2rem; max-width: 520px; line-height: 1.7; opacity: 0;
     }
 
-    .hero-actions { display: flex; gap: 1rem; justify-content: center; align-items: center; opacity: 1; flex-wrap: wrap; }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; align-items: center; opacity: 0; flex-wrap: wrap; }
 
     .btn-primary {
       background: var(--red); color: white; padding: 1rem 2.8rem;
@@ -443,83 +422,13 @@
       .slide-feat-title { font-size: clamp(1.2rem, 5vw, 1.8rem); }
       .slide-feat-body { font-size: 0.7rem; }
     }
-
-    /* ── Splash screen ── */
-    #splash {
-      position: fixed; inset: 0; z-index: 99999;
-      background: #050507;
-      display: flex; align-items: center; justify-content: center;
-      transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1);
-    }
-    #splash.exit { opacity: 0; transform: scale(1.04); pointer-events: none; }
-    #splash-glow {
-      position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 55% 45% at 50% 48%, rgba(255,45,85,0.12) 0%, transparent 70%);
-      animation: splashPulse 3s ease-in-out infinite;
-    }
-    @keyframes splashPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
-    #splash-inner { position: relative; text-align: center; width: min(480px, 85vw); }
-    #splash-wordmark {
-      font-family: 'Poppins', sans-serif;
-      font-size: clamp(2.6rem, 9vw, 5.5rem); font-weight: 800;
-      letter-spacing: -0.02em; text-transform: uppercase; line-height: 1;
-      opacity: 0; transform: translateY(20px);
-      animation: splashRise 0.8s cubic-bezier(0.22,0.61,0.36,1) 0.15s forwards;
-    }
-    #splash-wordmark span { color: #FF2D55; }
-    #splash-rule {
-      height: 1px; background: rgba(255,45,85,0.55); border-radius: 1px;
-      box-shadow: 0 0 14px rgba(255,45,85,0.45);
-      margin: 1.6rem 0 1.4rem;
-      transform: scaleX(0); transform-origin: center;
-      animation: splashRule 0.6s cubic-bezier(0.4,0,0.2,1) 0.65s forwards;
-    }
-    #splash-tagline {
-      font-family: 'Poppins', sans-serif; font-size: 0.65rem;
-      letter-spacing: 0.25em; text-transform: uppercase;
-      color: rgba(255,255,255,0.22); font-weight: 600; margin-bottom: 2.4rem;
-      opacity: 0; animation: splashFade 0.5s ease 1s forwards;
-    }
-    #splash-track {
-      height: 2px; background: rgba(255,255,255,0.07);
-      border-radius: 2px; overflow: hidden;
-      opacity: 0; animation: splashFade 0.4s ease 1.1s forwards;
-    }
-    #splash-fill {
-      height: 100%; width: 0%; background: #FF2D55; border-radius: 2px;
-      box-shadow: 0 0 10px rgba(255,45,85,0.7);
-      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-    }
-    #splash-meta {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-top: 0.9rem;
-      font-family: 'Poppins', sans-serif; font-size: 0.6rem;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(255,255,255,0.18); font-weight: 600;
-      opacity: 0; animation: splashFade 0.4s ease 1.15s forwards;
-    }
-    #splash-num { color: rgba(255,45,85,0.75); font-weight: 700; }
-    @keyframes splashRise { to { opacity:1; transform:translateY(0); } }
-    @keyframes splashRule { to { transform:scaleX(1); } }
-    @keyframes splashFade { to { opacity:1; } }
   </style>
 </head>
 <body>
-
-  <!-- Splash screen -->
-  <div id="splash">
-    <div id="splash-glow"></div>
-    <div id="splash-inner">
-      <div id="splash-wordmark">Arise<span>Pages</span></div>
-      <div id="splash-rule"></div>
-      <div id="splash-tagline">Diseño que convierte</div>
-    </div>
-  </div>
-
   <div class="grain"></div>
 
   <nav id="main-nav">
-    <div class="nav-logo">Arise<span>Pages</span></div>
+    <div class="nav-logo">Landing<span>Pages</span></div>
     <div class="nav-links">
       <a href="#benefits">Por qué nosotros</a>
       <a href="#examples">Ejemplos</a>
@@ -531,6 +440,10 @@
   <section id="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
+      <div class="hero-badge" id="hero-badge">
+        <div class="hero-badge-dot"></div>
+        <span>Conversión garantizada</span>
+      </div>
       <p class="hero-eyebrow">Diseño que vende</p>
       <h1 class="hero-title">
         Tu página de ventas<br>
@@ -541,8 +454,8 @@
         Desde $100. Sin compromisos. Comienza hoy.
       </p>
       <div class="hero-actions">
-        <button class="btn-primary" onclick="document.getElementById('examples').scrollIntoView({behavior:'smooth'})">
-          Ver Ejemplos
+        <button class="btn-primary" onclick="document.getElementById('pricing').scrollIntoView()">
+          Ver Precios
         </button>
         <a href="https://wa.me/573507016717?text=Quiero%20una%20web%20que%20venda" class="btn-ghost">
           Hablemos por WhatsApp
@@ -837,7 +750,7 @@
       <a href="privacy.html" style="color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s;">Privacidad</a>
       <a href="https://wa.me/573507016717" style="color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s;">Soporte</a>
     </div>
-    <p class="footer-copy">© 2026 ArisePages. Colombia.</p>
+    <p class="footer-copy">© 2026 Webs de Conversión Premium. Colombia.</p>
   </footer>
 
   <script>
@@ -847,16 +760,27 @@
       nav.classList.toggle('scrolled', window.scrollY > 80);
     });
 
-    // Hero animations — run immediately (GSAP loaded sync in <head>, no window.load wait)
-    (function () {
-      try {
-        var tl = gsap.timeline({ delay: 0.1 });
-        tl.from('.hero-eyebrow',  { opacity: 0, y: 10, duration: 0.5,  ease: 'power2.out' }, 0)
-          .from('.hero-title',    { opacity: 0, y: 24, duration: 0.65, ease: 'power2.out' }, 0.1)
-          .from('.hero-sub',      { opacity: 0, y: 12, duration: 0.5,  ease: 'power2.out' }, 0.28)
-          .from('.hero-actions',  { opacity: 0, y: 12, duration: 0.5,  ease: 'power2.out' }, 0.38);
-      } catch (e) {}
-    })();
+    // Hero animations
+    window.addEventListener('load', () => {
+      const tl = gsap.timeline({ delay: 0.2 });
+      tl.to('#hero-badge', { opacity: 1, duration: 0.6, ease: 'power2.out' }, 0)
+        .to('.hero-eyebrow', { opacity: 1, duration: 0.6 }, 0.1)
+        .to('.hero-sub', { opacity: 1, duration: 0.6 }, 0.15)
+        .to('.hero-actions', { opacity: 1, duration: 0.6 }, 0.2);
+    });
+
+    // Smooth scroll
+    const lenis = new Lenis({
+      lerp: 0.04,
+      smoothWheel: true,
+      wheelMultiplier: 0.7,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 
     // Form handler
     function handleForm(e) {
@@ -869,58 +793,28 @@
       window.open(`https://wa.me/573507016717?text=${text}`, '_blank');
     }
 
-    // Splash coordinator — exits as soon as all 3 first-frames are drawn + MIN_MS
-    (function () {
-      var TOTAL = 3, MIN_MS = 3000, count = 0, minPassed = false, done = false;
-      function doHide() {
-        if (done) return; done = true;
-        var el = document.getElementById('splash');
-        if (!el) return;
-        el.classList.add('exit');
-        setTimeout(function () { el.style.display = 'none'; }, 950);
-      }
-      function tryHide() {
-        if (count >= TOTAL && minPassed) doHide();
-      }
-      // 900ms: wordmark + rule animations complete, minimum branding exposure
-      setTimeout(function () { minPassed = true; tryHide(); }, MIN_MS);
-      // Absolute cap at 3s — only fires if frames genuinely never loaded (network failure)
-      setTimeout(doHide, 3000);
-      window._splashSectionReady = function () {
-        count++;
-        var pct = Math.round((count / TOTAL) * 100);
-        var fill = document.getElementById('splash-fill');
-        var num  = document.getElementById('splash-num');
-        if (fill) fill.style.width = pct + '%';
-        if (num)  num.textContent  = pct + '%';
-        tryHide();
-      };
-    })();
-
     // Scroll-frame player
-    function createScrollFramePlayer({ sectionId, canvasId, loaderId, barId, pctId, framesPath, frameCount, frameExt, frameW, frameH, slides, frameStep = 2 }) {
-      const section  = document.getElementById(sectionId);
-      const canvas   = document.getElementById(canvasId);
+    function createScrollFramePlayer({ sectionId, canvasId, loaderId, barId, pctId, framesPath, frameCount, frameExt, frameW, frameH, slides }) {
+      const section = document.getElementById(sectionId);
+      const canvas = document.getElementById(canvasId);
       const loaderEl = document.getElementById(loaderId);
-      const barEl    = document.getElementById(barId);
-      const ctx      = canvas.getContext('2d');
+      const barEl = document.getElementById(barId);
+      const pctEl = document.getElementById(pctId);
+      const ctx = canvas.getContext('2d');
       const slideEls = (slides || []).map(s => ({ el: document.getElementById(s.id), from: s.from, to: s.to }));
       const isPortrait = frameH > frameW;
 
-      const stepCount = Math.ceil(frameCount / frameStep);
-      const startIdx  = stepCount - 1;
-
-      // Cap DPR at 2 — no visible difference above 2x, halves canvas memory on 3x screens
       let cvW = 0, cvH = 0, dpr = 1;
       let fgW = 0, fgH = 0, fgX = 0, fgY = 0;
       let frames = [], loaded = 0, currentFrame = -1, animRunning = false;
 
       function resizeCanvas() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        dpr = window.devicePixelRatio || 1;
         cvW = window.innerWidth;
         cvH = window.innerHeight;
-        const aspect   = frameW / frameH;
+        const aspect = frameW / frameH;
         const vpAspect = cvW / cvH;
+
         if (isPortrait) {
           fgH = cvH; fgW = cvH * aspect;
           fgX = (cvW - fgW) / 2; fgY = 0;
@@ -929,9 +823,10 @@
           else { fgH = cvH; fgW = cvH * aspect; }
           fgX = (cvW - fgW) / 2; fgY = (cvH - fgH) / 2;
         }
-        canvas.width  = Math.round(cvW * dpr);
+
+        canvas.width = Math.round(cvW * dpr);
         canvas.height = Math.round(cvH * dpr);
-        canvas.style.width  = cvW + 'px';
+        canvas.style.width = cvW + 'px';
         canvas.style.height = cvH + 'px';
         ctx.scale(dpr, dpr);
         if (frames[currentFrame] && frames[currentFrame].complete) drawFrame(frames[currentFrame]);
@@ -942,11 +837,14 @@
         ctx.drawImage(img, fgX, fgY, fgW, fgH);
       }
 
-      function hideLoader() {
-        if (!loaderEl) return;
-        loaderEl.style.transition = 'opacity 0.4s ease';
+      function onAllLoaded() {
+        loaderEl.style.transition = 'opacity 0.6s ease';
         loaderEl.style.opacity = '0';
-        setTimeout(() => { loaderEl.style.display = 'none'; }, 450);
+        setTimeout(() => { loaderEl.style.display = 'none'; }, 650);
+        const startIdx = frameCount - 1;
+        drawFrame(frames[startIdx]);
+        currentFrame = startIdx;
+        startAnimation();
       }
 
       function startAnimation() {
@@ -957,23 +855,15 @@
 
       function loop() {
         requestAnimationFrame(loop);
-        // Skip CPU work when section is well outside viewport
         const rect = section.getBoundingClientRect();
-        if (rect.bottom < -window.innerHeight || rect.top > window.innerHeight * 2) return;
-
         const scrolled = -rect.top;
-        const total    = rect.height - window.innerHeight;
+        const total = rect.height - window.innerHeight;
         if (total <= 0) return;
         const progress = Math.max(0, Math.min(1, scrolled / total));
-        let idx = Math.max(0, stepCount - 1 - Math.floor(progress * stepCount));
-        if (idx !== currentFrame) {
-          for (let d = 0; d < stepCount; d++) {
-            const a = Math.max(0, Math.min(stepCount - 1, idx + d));
-            if (frames[a] && frames[a].complete) { idx = a; break; }
-            const b = Math.max(0, Math.min(stepCount - 1, idx - d));
-            if (frames[b] && frames[b].complete) { idx = b; break; }
-          }
-          if (frames[idx] && frames[idx].complete && idx !== currentFrame) { currentFrame = idx; drawFrame(frames[idx]); }
+        const idx = Math.max(0, frameCount - 1 - Math.floor(progress * frameCount));
+        if (idx !== currentFrame && frames[idx] && frames[idx].complete) {
+          currentFrame = idx;
+          drawFrame(frames[idx]);
         }
         const FADE = 0.06;
         slideEls.forEach(({ el, from, to }) => {
@@ -985,96 +875,66 @@
             else opa = 1;
           }
           opa = Math.max(0, Math.min(1, opa));
-          const ty = progress < from + FADE && progress >= from ? (1 - opa) * 38
-                   : progress > to - FADE   && progress <= to   ? (1 - opa) * -38 : 0;
-          el.style.opacity   = opa;
+          const ty = progress < from + FADE && progress >= from ? (1 - opa) * 38 : progress > to - FADE && progress <= to ? (1 - opa) * -38 : 0;
+          el.style.opacity = opa;
           el.style.transform = `translateY(${ty}px)`;
         });
-      }
-
-      function makeFrame(i) {
-        if (frames[i] && frames[i].src) return; // already requested
-        const img = new Image();
-        const n   = i * frameStep + 1;
-        img.src   = `${framesPath}frame_${String(n).padStart(4, '0')}.${frameExt}`;
-        frames[i] = img;
-        img.onload = () => {
-          loaded++;
-          if (barEl) barEl.style.width = Math.round((loaded / stepCount) * 100) + '%';
-          if (i === startIdx && !animRunning) {
-            drawFrame(img); currentFrame = i;
-            hideLoader(); startAnimation();
-            if (window._splashSectionReady) window._splashSectionReady();
-            batchLoad();
-          }
-        };
-        img.onerror = () => {
-          loaded++;
-          if (i === startIdx) {
-            if (window._splashSectionReady) window._splashSectionReady();
-            batchLoad();
-          }
-        };
-      }
-
-      function batchLoad() {
-        // Batch 1 (immediate): first 60 frames in scroll direction — covers ~500px of scroll before any gap
-        const B1 = 60;
-        for (let j = startIdx - 1; j >= Math.max(0, startIdx - B1); j--) makeFrame(j);
-        // Batch 2 (80ms): next 120 frames — covers the middle third of the section
-        setTimeout(() => {
-          for (let j = Math.max(0, startIdx - B1 - 1); j >= Math.max(0, startIdx - B1 - 120); j--) makeFrame(j);
-          // Load a few frames above startIdx for reverse-scroll smoothness
-          for (let j = startIdx + 1; j < Math.min(stepCount, startIdx + 20); j++) makeFrame(j);
-        }, 80);
-        // Batch 3 (350ms): all remaining frames — user unlikely to reach tail before this fires
-        setTimeout(() => {
-          for (let j = 0; j < stepCount; j++) makeFrame(j); // makeFrame skips already-requested
-        }, 350);
       }
 
       function startLoading() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        frames = new Array(stepCount).fill(null);
-        makeFrame(startIdx); // first frame only → triggers batchLoad on arrival
+        frames = Array.from({ length: frameCount }, (_, i) => {
+          const img = new Image();
+          img.src = `${framesPath}frame_${String(i + 1).padStart(4,'0')}.${frameExt}`;
+          img.onload = () => {
+            loaded++;
+            const pct = Math.round((loaded / frameCount) * 100);
+            barEl.style.width = pct + '%';
+            pctEl.textContent = `Cargando… ${pct}%`;
+            if (loaded === frameCount) onAllLoaded();
+          };
+          return img;
+        });
       }
 
-      startLoading();
+      const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          observer.disconnect();
+          startLoading();
+        }
+      }, { rootMargin: '150% 0px' });
+      observer.observe(section);
     }
 
     function initScrollFrames() {
-      // frameStep=2: 334 frames, 7.8px/frame = 39fps equiv at normal scroll — smooth
       createScrollFramePlayer({
         sectionId: 'scroll-clocks', canvasId: 'canvas-clocks',
         loaderId: 'loader-clocks', barId: 'bar-clocks', pctId: 'pct-clocks',
         framesPath: './frames/clocks/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 2,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720,
         slides: [
           { id: 'sc-1', from: 0, to: 0.38 },
           { id: 'sc-2', from: 0.32, to: 0.72 },
           { id: 'sc-3', from: 0.66, to: 1.00 },
         ],
       });
-      // frameStep=1: 476 frames, 6.4px/frame = 47fps equiv — cinema smooth
-      // (justified: fewer source frames over a longer scroll range)
       createScrollFramePlayer({
         sectionId: 'scroll-airpods', canvasId: 'canvas-airpods',
         loaderId: 'loader-airpods', barId: 'bar-airpods', pctId: 'pct-airpods',
         framesPath: './frames/airpods/',
-        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280, frameStep: 1,
+        frameCount: 476, frameExt: 'jpg', frameW: 720, frameH: 1280,
         slides: [
           { id: 'sa-1', from: 0, to: 0.38 },
           { id: 'sa-2', from: 0.32, to: 0.72 },
           { id: 'sa-3', from: 0.66, to: 1.00 },
         ],
       });
-      // frameStep=2: 334 frames, 7.8px/frame = 39fps equiv — smooth
       createScrollFramePlayer({
         sectionId: 'scroll-aroma', canvasId: 'canvas-aroma',
         loaderId: 'loader-aroma', barId: 'bar-aroma', pctId: 'pct-aroma',
         framesPath: './frames/aroma/',
-        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720, frameStep: 2,
+        frameCount: 667, frameExt: 'jpg', frameW: 1280, frameH: 720,
         slides: [
           { id: 'sm-1', from: 0, to: 0.38 },
           { id: 'sm-2', from: 0.32, to: 0.72 },
@@ -1096,91 +956,8 @@
       });
     });
 
-    // Start frame loading immediately — don't wait for window.load (which waits for GSAP, fonts, etc.)
-    try { initScrollFrames(); } catch (e) { console.warn('Frames error:', e); }
-
     window.addEventListener('load', () => {
-      // Init animations
-      try {
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Animar benefit cards
-        document.querySelectorAll('.benefit-card').forEach((el, i) => {
-          gsap.from(el, {
-            scrollTrigger: {
-              trigger: '#benefits',
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: i * 0.08,
-            ease: 'power2.out',
-          });
-        });
-
-        // Animar pricing cards
-        document.querySelectorAll('.pricing-card').forEach((el, i) => {
-          gsap.from(el, {
-            scrollTrigger: {
-              trigger: '#pricing',
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: i * 0.08,
-            ease: 'power2.out',
-          });
-        });
-
-        // Animar contact items
-        document.querySelectorAll('.contact-item').forEach((el, i) => {
-          gsap.from(el, {
-            scrollTrigger: {
-              trigger: '#contact',
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: i * 0.08,
-            ease: 'power2.out',
-          });
-        });
-
-        // Botones hover
-        document.querySelectorAll('.btn-primary, .btn-ghost, .nav-cta').forEach(btn => {
-          btn.addEventListener('mouseenter', () => {
-            gsap.to(btn, { scale: 1.05, duration: 0.2 });
-          });
-          btn.addEventListener('mouseleave', () => {
-            gsap.to(btn, { scale: 1, duration: 0.2 });
-          });
-        });
-
-        // Parallax hero
-        const heroBg = document.querySelector('.hero-bg');
-        if (heroBg) {
-          gsap.to(heroBg, {
-            scrollTrigger: {
-              trigger: '#hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 0.5,
-            },
-            y: 50,
-            ease: 'none',
-          });
-        }
-
-        // Badge floating handled in inline hero block above
-      } catch (e) {
-        console.error('Animations error:', e);
-      }
+      initScrollFrames();
     });
   </script>
 </body>
